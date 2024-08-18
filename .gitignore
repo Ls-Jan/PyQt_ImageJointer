@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# 不必要的文件
+tempCodeRunnerFile.py
+
 # C extensions
 *.so
 
