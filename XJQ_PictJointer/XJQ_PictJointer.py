@@ -13,6 +13,9 @@ from XJ.Structs.XJ_MouseStatus import XJ_MouseStatus
 from XJ.Widgets.XJQ_UrlPict import XJQ_UrlPict
 from XJ.Widgets.XJQ_UrlPict import UrlPictConfig
 from XJ.Functions.GetRealPath import GetRealPath
+from XJ.Widgets.XJQ_ClipboardDrag import XJQ_ClipboardDrag
+from XJ.Widgets.XJQ_ScreenCapture import XJQ_ScreenCapture
+from typing import Union
 
 # from .Command import Move
 # from .Command import MultiCmds
@@ -40,7 +43,7 @@ class XJQ_PictJointer(QWidget):
 		mskSe=XJQ_SelectedPreviewMask(self)
 		mskIn=XJQ_InsertPreviewMask(self)
 		ms=XJ_MouseStatus(self)
-		box.addStretch(1)
+		box.addStretch(1)#盒子必有一个空元素，其余元素均是控件
 		ms.Set_AntiJitter(50)#防抖打高点，省的随随便便就被拖走
 		mskIn.Set_DetectRadius(40)
 		mskIn.Set_ValidDire(False,True)
@@ -48,6 +51,7 @@ class XJQ_PictJointer(QWidget):
 		mskIn.Set_IncludeLayout(box)
 		mskIn.hide()
 		mskSe.show()
+
 		self.__mskIn=mskIn
 		self.__mskSe=mskSe
 		self.__stk=QUndoStack(self)
@@ -92,9 +96,11 @@ class XJQ_PictJointer(QWidget):
 						pict=XJQ_UrlPict(self.__config,url)
 						cmds.append(Move(pict,insertIndex,self.__box,True))
 				elif(mData.hasImage()):
+
 					img=mData.imageData()
 					data=QByteArray()
 					pix=QPixmap()
+					print(img)
 					pix.fromImage(img)
 					pix.save(QBuffer(data),'png')
 
@@ -164,10 +170,15 @@ class XJQ_PictJointer(QWidget):
 			else:
 				align=Qt.AlignmentFlag.AlignVCente
 		box.setAlignment(align)
-	def Opt_InsertPict(self,index,pict:XJQ_UrlPict):
+	def Opt_InsertPict(self,pict:Union[XJQ_UrlPict,QPixmap],index:int=-1):
 		'''
-			在指定位置插入图片
+			在指定位置插入图片。
+			如果index为负数则插入到末尾
 		'''
+		if(index<0):
+			index=self.__box.count()-1#盒子必有一个空元素，其余元素均是控件
+		if(isinstance(pict,QPixmap)):
+			pict=XJQ_UrlPict(self.__config,None,pict)
 		self.__stk.push(Move(pict,index,self.__box,True))
 	def Opt_RemovePict(self,index:int):
 		'''
@@ -246,19 +257,27 @@ from XJ.Widgets.XJQ_GarbageBin import XJQ_GarbageBin
 class Main(QWidget):
 	def __init__(self):
 		super().__init__()
+		config:UrlPictConfig=UrlPictConfig((64,64))
 		hbox=QHBoxLayout(self)
 		vboxL=QVBoxLayout()
 		cd=XJQ_ClipboardDrag(None,QPixmap(GetRealPath('./空白文件.ico')),QSize(96,96))
-		pj=XJQ_PictJointer()
+		pj=XJQ_PictJointer(config)
 		gb=XJQ_GarbageBin(None,QSize(96,96))
+		sc=XJQ_ScreenCapture()
 		gb.dropped.connect(lambda mData:pj.Opt_RemoveSelectedPicts())
-	
+		sc.captured.connect(lambda pix:pj.Opt_InsertPict(pix))
+		# sc.captured.connect(self.Opt_AppendPict)
+
+		vboxL.addWidget(sc)
 		vboxL.addWidget(cd)
 		vboxL.addWidget(gb)
 		vboxL.addStretch(1)
 		hbox.addLayout(vboxL)
 		hbox.addWidget(pj,1)
-
+		self.__pj=pj
+	# def Opt_InsertPict(self,pix:QPixmap,index:int):
+		# XJQ_UrlPict()
+		# self.__pj.Opt_InsertPict(index)
 
 if True:
 	app=QApplication([])

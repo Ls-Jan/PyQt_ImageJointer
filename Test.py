@@ -24,6 +24,31 @@ if True:
 	t=QLabel()
 	t.show()
 	t.resize(640,480)
+
+	pix=QPixmap(640,480)
+	pix.fill(Qt.GlobalColor.transparent)
+	target=QRect(128,128,128,128)
+	target2=QRect(192,192,128,128)
+	ptr=QPainter(pix)
+	# ptr.setViewport(QRect(100,100,100,100))
+	# ptr.setWindow(QRect(100,100,100,100))
+	ptr.fillRect(target,QColor(0,255,255,128))
+	ptr.setCompositionMode(QPainter.CompositionMode.CompositionMode_Clear)
+	# ptr.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOut)
+	ptr.fillRect(target2,QColor(0,0,255))
+	# ptr.fillRect(target2,QColor(0,0,255,128))
+	# ptr.setCompositionMode(QPainter.CompositionMode.CompositionMode_Xor)
+	# ptr.setCompositionMode(QPainter.CompositionMode.CompositionMode_DestinationOver)
+	# ptr.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceOver)
+	# ptr.fillRect(0,0,pix.width(),pix.height(),QColor(255,0,0,192))
+	# ptr.
+	ptr.end()
+	t.setPixmap(pix)
+	app.exec()
+	exit()
+
+
+
 	lst=[
 		QPixmap('./XJQ_PictJointer/加载动画-1.gif'),
 		QPixmap('./XJQ_PictJointer/图标-文件丢失.png'),
