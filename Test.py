@@ -18,12 +18,30 @@ class Test(QMainWindow):
 		self.setMenuBar(mb)
 		mb.show()
 
+
 if True:
 	app=QApplication([])
 
+	# timer=QTimer()
+	# timer.setInterval(100)
+	# timer.timeout.connect(lambda :print('...'))
+	# timer.start()
+	mv=QMovie('./XJQ_PictJointer/加载动画-1.gif')
+	mv.start()
+
+	# mv.jumpToFrame(0)
+	mv.frameChanged.connect(lambda :print('...'))
+	# while(mv.jumpToNextFrame()):
+		# print(mv.currentFrameNumber())
+	# mv.frameCount()
+	# timer.setSingleShot(True)
 	t=QLabel()
 	t.show()
 	t.resize(640,480)
+	app.exec()
+
+	exit()
+
 
 	pix=QPixmap(640,480)
 	pix.fill(Qt.GlobalColor.transparent)
