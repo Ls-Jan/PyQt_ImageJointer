@@ -2,11 +2,11 @@
 
 __version__='1.0.0'
 __author__='Ls_Jan'
-__all__=['Move']
+__all__=['WidgetMove']
 
 from PyQt5.QtWidgets import QUndoCommand,QWidget,QBoxLayout
 
-class Move(QUndoCommand):
+class WidgetMove(QUndoCommand):
 	'''
 		控件移动命令，将控件移动到盒布局的指定位置，同时具有可见恢复功能
 	'''
